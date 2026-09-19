@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel | Raisa Nayara Barbosa</title>
+<meta name="description" content="Área restrita.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --creme:#f7f3e8;--papel:#fff;--oliva:#5f6f45;--oliva-claro:#eaeee0;--oliva-suave:#f2f5ea;
+  --tomate:#c74b34;--tomate-claro:#f7e6e1;--tinta:#2f2c22;--lapis:#6d6a5c;
+  --borda:rgba(47,44,34,.13);--raio:2px;--menu:212px;
+  --azul:#2f5d8a;--azul-claro:#e5edf5;--mostarda:#a8811f;--mostarda-claro:#f7efd9;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Mulish',system-ui,sans-serif;font-size:13.5px;line-height:1.55;color:var(--tinta);
+  background:var(--creme);
+}
+body.verificando .app,body.verificando .barra-topo{visibility:hidden}
+img{max-width:100%;display:block}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--tomate);outline-offset:2px}
+h1,h2,h3{margin:0;font-weight:800}
+p{margin:0 0 8px}
+a{color:var(--oliva)}
+
+/* ---------- estrutura ---------- */
+.app{display:grid;grid-template-columns:var(--menu) 1fr;min-height:100vh}
+.menu{
+  background:var(--papel);border-right:1px solid var(--borda);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+}
+.menu-topo{padding:16px 14px 10px;border-bottom:1px solid var(--borda)}
+.menu-topo strong{display:block;font-size:13px}
+.menu-topo span{font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--tomate);font-weight:800}
+.menu nav{flex:1;overflow-y:auto;padding:10px 8px}
+.grupo{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--lapis);font-weight:800;padding:12px 8px 6px}
+.item{
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;cursor:pointer;
+  background:none;border:0;border-radius:var(--raio);padding:8px 9px;margin-bottom:2px;
+  font-size:13px;font-weight:600;color:var(--tinta);
+}
+.item:hover{background:var(--oliva-suave)}
+.item[aria-current="page"]{background:var(--oliva-claro);color:var(--oliva);font-weight:800}
+.item svg{flex:none;width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.menu-baixo{padding:12px 14px;border-top:1px solid var(--borda)}
+.menu-baixo small{display:block;font-size:11px;color:var(--lapis);word-break:break-all;margin-bottom:8px}
+.conteudo{padding:18px 20px 60px;min-width:0}
+.cabecalho{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.cabecalho h1{font-size:17px}
+.cabecalho .dica{font-size:12px;color:var(--lapis)}
+.abrir-menu{display:none}
+
+/* ---------- peças ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;border-radius:var(--raio);
+  padding:7px 12px;font-size:12px;font-weight:800;border:1px solid var(--oliva);
+  background:var(--oliva);color:#fff;
+}
+.btn:hover{background:#4c5a37;border-color:#4c5a37}
+.btn.claro{background:var(--papel);color:var(--oliva)}
+.btn.claro:hover{background:var(--oliva-claro)}
+.btn.tom{background:var(--tomate);border-color:var(--tomate)}
+.btn.tom:hover{background:#ab3c27;border-color:#ab3c27}
+.btn.mini{padding:4px 8px;font-size:11px}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn:disabled{opacity:.55;cursor:default}
+.icone{
+  background:none;border:1px solid transparent;border-radius:var(--raio);cursor:pointer;padding:4px;color:var(--lapis);
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.icone:hover{background:var(--oliva-suave);color:var(--oliva)}
+.icone svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.caixa{background:var(--papel);border:1px solid var(--borda);border-radius:var(--raio);padding:14px}
+.caixa + .caixa{margin-top:14px}
+.caixa h2{font-size:13px;margin-bottom:10px}
+.vazio{color:var(--lapis);font-size:12.5px;padding:14px;text-align:center;background:var(--oliva-suave);border-radius:var(--raio)}
+.campo{margin-bottom:10px}
+label{display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--oliva);margin-bottom:4px}
+input,select,textarea{
+  width:100%;background:var(--creme);border:1px solid var(--borda);border-bottom:2px solid var(--oliva);
+  border-radius:var(--raio);padding:7px 9px;font-size:13px;
+}
+textarea{min-height:70px;resize:vertical}
+.ferramentas{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.ferramentas input,.ferramentas select{width:auto;min-width:150px;flex:0 1 auto}
+.pilulas{display:flex;flex-wrap:wrap;gap:6px}
+.pilula{
+  cursor:pointer;border:1px solid var(--borda);background:var(--papel);border-radius:var(--raio);
+  padding:5px 10px;font-size:11.5px;font-weight:800;color:var(--lapis);
+}
+.pilula[aria-pressed="true"]{background:var(--oliva-claro);border-color:var(--oliva);color:var(--oliva)}
+
+/* faixa de indicadores */
+.faixa{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--borda);border:1px solid var(--borda);border-radius:var(--raio);margin-bottom:14px;overflow:hidden}
+.faixa.q4{grid-template-columns:repeat(4,1fr)}
+.kpi{background:var(--papel);padding:10px 12px;min-width:0}
+.kpi b{display:block;font-size:19px;line-height:1.2;color:var(--oliva);font-weight:800}
+.kpi span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--lapis);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi em{display:block;font-style:normal;font-size:11px;color:var(--lapis);margin-top:2px}
+
+/* tabelas */
+.rolagem{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--borda);vertical-align:middle}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--lapis);font-weight:800;white-space:nowrap}
+th.ord{cursor:pointer;user-select:none}
+th.ord:hover{color:var(--oliva)}
+th .seta{color:rgba(47,44,34,.25);margin-left:3px}
+th.ativa{color:var(--oliva)}
+th.ativa .seta{color:var(--oliva)}
+tbody tr:hover{background:var(--oliva-suave)}
+tbody tr.clicavel{cursor:pointer}
+tr.destacada td:first-child{box-shadow:inset 3px 0 0 var(--mostarda)}
+td.acoes{white-space:nowrap;text-align:right}
+.puxador{cursor:grab;color:var(--lapis)}
+tr.arrastando{opacity:.4}
+.apagado{opacity:.45}
+
+/* etiquetas coloridas */
+.tag{display:inline-block;border-radius:var(--raio);padding:2px 7px;font-size:10.5px;font-weight:800;white-space:nowrap}
+.t-oliva{background:var(--oliva-claro);color:#42502f}
+.t-tomate{background:var(--tomate-claro);color:#8c3122}
+.t-azul{background:var(--azul-claro);color:#264a6d}
+.t-mostarda{background:var(--mostarda-claro);color:#7a5e14}
+.t-cinza{background:#eeece4;color:var(--lapis)}
+
+/* gráfico de barras */
+.grafico{display:flex;align-items:flex-end;gap:5px;height:130px;padding-top:6px}
+.barra{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;min-width:0}
+.barra i{display:block;width:100%;background:var(--oliva);border-radius:var(--raio);min-height:2px}
+.barra i.zero{background:var(--borda)}
+.barra span{font-size:9.5px;color:var(--lapis);white-space:nowrap}
+.lista-origens li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--borda);font-size:12.5px}
+.lista-origens{list-style:none;margin:0;padding:0}
+
+/* calendário */
+.mes{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--borda);border:1px solid var(--borda);border-radius:var(--raio);overflow:hidden}
+.mes .nome-dia{background:var(--oliva-suave);padding:5px;text-align:center;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--lapis)}
+.dia{background:var(--papel);min-height:96px;padding:5px;position:relative}
+.dia.fora{background:#faf8f2}
+.dia.fora .num{color:rgba(47,44,34,.3)}
+.dia.hoje{background:var(--oliva-claro)}
+.dia.hoje .num{background:var(--tomate);color:#fff;border-radius:50%;width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center}
+.num{font-size:11px;font-weight:800;color:var(--lapis)}
+.mais-dia{position:absolute;right:4px;top:4px;opacity:0}
+.dia:hover .mais-dia,.dia:focus-within .mais-dia{opacity:1}
+.evento{
+  display:block;width:100%;text-align:left;border:0;border-radius:var(--raio);cursor:pointer;
+  padding:2px 5px;margin-top:3px;font-size:10.5px;font-weight:600;line-height:1.35;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.evento.feito{text-decoration:line-through;opacity:.6}
+.e-gravar{background:var(--tomate-claro);color:#8c3122}
+.e-editar{background:var(--azul-claro);color:#264a6d}
+.e-postar{background:var(--oliva-claro);color:#42502f}
+.e-prazo{background:var(--mostarda-claro);color:#7a5e14}
+.mais{background:none;border:0;cursor:pointer;font-size:10px;font-weight:800;color:var(--lapis);padding:2px 5px}
+.mais:hover{color:var(--tomate)}
+.nav-mes{display:flex;align-items:center;gap:6px}
+.nav-mes b{min-width:130px;text-align:center;font-size:13px}
+
+/* checklist */
+.subabas{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;border-bottom:1px solid var(--borda);padding-bottom:10px}
+.dobra{border:1px solid var(--borda);border-radius:var(--raio);margin-bottom:8px;background:var(--papel);overflow:hidden}
+.dobra > summary{cursor:pointer;padding:10px 12px;font-weight:800;font-size:13px;display:flex;align-items:center;gap:8px;list-style:none}
+.dobra > summary::-webkit-details-marker{display:none}
+.dobra > summary:hover{background:var(--oliva-suave)}
+.dobra .corpo{padding:0 12px 12px}
+.progresso{height:5px;background:var(--oliva-suave);border-radius:var(--raio);overflow:hidden;margin-top:5px}
+.progresso i{display:block;height:100%;background:var(--oliva)}
+.porque{background:var(--oliva-suave);border-left:3px solid var(--oliva);padding:8px 10px;font-size:12.5px;margin:0 0 10px;border-radius:var(--raio)}
+.check{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--borda);align-items:flex-start}
+.check:last-child{border-bottom:0}
+.check input{width:16px;height:16px;flex:none;margin-top:2px;accent-color:var(--oliva)}
+.check b{display:block;font-size:12.5px;font-weight:700}
+.check span{display:block;font-size:11.5px;color:var(--lapis)}
+.check.ok b{text-decoration:line-through;color:var(--lapis)}
+.cartoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px}
+.cartao-ref{border:1px solid var(--borda);border-radius:var(--raio);background:var(--papel);overflow:hidden;cursor:pointer;text-align:left;padding:0;width:100%}
+.cartao-ref:hover{border-color:var(--oliva)}
+.capa-ref{aspect-ratio:9/16;display:flex;align-items:center;justify-content:center;font-size:36px}
+.c-coral{background:linear-gradient(160deg,#f7e6e1,#dd9280)}
+.c-oliva{background:linear-gradient(160deg,#eaeee0,#9aa87d)}
+.c-mostarda{background:linear-gradient(160deg,#f7efd9,#d9b85e)}
+.c-terra{background:linear-gradient(160deg,#f0e3d8,#b98f76)}
+.c-rosa{background:linear-gradient(160deg,#f7e4ea,#d68fa5)}
+.c-areia{background:linear-gradient(160deg,#f7f3e8,#c8c2a6)}
+.cartao-ref .info{padding:8px 9px}
+.cartao-ref .info b{display:block;font-size:12.5px}
+.cartao-ref .info span{font-size:11px;color:var(--lapis)}
+.beat{display:grid;grid-template-columns:72px 1fr;gap:10px;padding:6px 0;border-bottom:1px solid var(--borda);font-size:12.5px}
+.beat b{color:var(--tomate);font-size:11.5px}
+.ideia{padding:7px 0;border-bottom:1px solid var(--borda)}
+.ideia b{display:block;font-size:12.5px}
+.ideia span{display:block;font-size:12px;color:var(--lapis);font-style:italic}
+
+/* avisos e janela */
+.avisos{margin-bottom:12px}
+.aviso{
+  background:var(--mostarda-claro);border-left:3px solid var(--mostarda);color:#7a5e14;
+  border-radius:var(--raio);padding:8px 11px;font-size:12.5px;margin-bottom:6px;
+}
+.aviso.erro{background:var(--tomate-claro);border-left-color:var(--tomate);color:#8c3122}
+.recado{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:500;
+  background:var(--tinta);color:#fff;border-radius:var(--raio);padding:9px 15px;font-size:12.5px;font-weight:600;
+  box-shadow:0 10px 26px -14px rgba(0,0,0,.8);
+}
+.fundo{position:fixed;inset:0;z-index:400;background:rgba(47,44,34,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.janela{
+  background:var(--papel);border-radius:var(--raio);border-left:6px solid var(--oliva);
+  width:min(470px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:16px 18px;
+}
+.janela.larga{width:min(620px,100%)}
+.janela h2{font-size:15px;margin-bottom:12px}
+.janela .rodape{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+.janela .rodape .esq{margin-right:auto}
+[hidden]{display:none!important}
+
+/* celular */
+.sombra-menu{display:none}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .menu{
+    position:fixed;left:0;top:0;bottom:0;width:236px;z-index:300;height:100vh;
+    transform:translateX(-100%);transition:transform .2s;
+  }
+  body.menu-aberto .menu{transform:none}
+  body.menu-aberto .sombra-menu{display:block;position:fixed;inset:0;z-index:290;background:rgba(47,44,34,.5)}
+  .abrir-menu{display:inline-flex}
+  .conteudo{padding:14px 14px 70px}
+  .faixa,.faixa.q4{grid-template-columns:repeat(2,1fr)}
+  .mes .nome-dia{font-size:8.5px}
+  .dia{min-height:74px}
+  .evento{font-size:9.5px}
+  .mais-dia{opacity:1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body class="verificando">
+
+<div class="sombra-menu" id="sombraMenu"></div>
+
+<div class="app">
+  <aside class="menu" id="menuLateral">
+    <div class="menu-topo">
+      <strong>Raisa Nayara Barbosa</strong>
+      <span>Painel</span>
+    </div>
+    <nav id="navegacao" aria-label="Seções do painel"></nav>
+    <div class="menu-baixo">
+      <small id="emailLogado"></small>
+      <button class="btn claro mini" id="btnSair" type="button">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Sair
+      </button>
+    </div>
+  </aside>
+
+  <main class="conteudo">
+    <div class="cabecalho">
+      <button class="btn claro mini abrir-menu" id="btnMenu" type="button" aria-label="Abrir menu">
+        <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        Menu
+      </button>
+      <h1 id="tituloAba">Portfólio</h1>
+      <span class="dica" id="dicaAba"></span>
+    </div>
+    <div class="avisos" id="avisos"></div>
+    <div id="painel"></div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="../js/banco.js"></script>
+<script src="../js/biblioteca.js"></script>
+<script>
+/* ============================================================
+   PAINEL DA RAISA
+   Tudo em JavaScript puro. Nada aqui precisa ser instalado.
+   ============================================================ */
+
+/* ---------- atalhos ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const painel = $('#painel');
+const problemas = [];   // o que faltou no banco
+
+function recado(txt) {
+  const d = document.createElement('div');
+  d.className = 'recado'; d.textContent = txt; d.setAttribute('role', 'status');
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 2600);
+}
+function anotarProblema(txt) {
+  if (txt && !problemas.includes(txt)) problemas.push(txt);
+}
+function mostrarProblemas() {
+  $('#avisos').innerHTML = problemas.map(p => '<p class="aviso">' + esc(p) + '</p>').join('');
+}
+
+/* datas, sempre no fuso local, sem susto de um dia a menos */
+const hojeISO = () => new Date().toLocaleDateString('sv-SE');
+const dISO = d => d.toLocaleDateString('sv-SE');
+function diasEntre(a, b) {   // quantos dias de a até b
+  const x = new Date(a + 'T12:00:00'), y = new Date(b + 'T12:00:00');
+  return Math.round((y - x) / 86400000);
+}
+function dataBonita(iso) {
+  if (!iso) return '';
+  const [a, m, d] = String(iso).slice(0, 10).split('-');
+  return d + '/' + m + '/' + a;
+}
+const dinheiro = v => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+/* ---------- ícones de traço ---------- */
+const ICONES = {
+  portfolio: '<path d="M2 7h20v13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M2 7l3-4h14l3 4"/><path d="M10 12l5 3-5 3z"/>',
+  marcas: '<path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-7h6v7"/>',
+  calendario: '<rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  campanhas: '<path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/>',
+  checklist: '<path d="M9 5h10M9 12h10M9 19h10"/><path d="M4 5l1.4 1.4L8 4"/><path d="M4 12l1.4 1.4L8 11"/><path d="M4 19l1.4 1.4L8 18"/>',
+  mais: '<path d="M12 5v14M5 12h14"/>',
+  lapis: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  lixo: '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/>',
+  olho: '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/>',
+  olhoCortado: '<path d="M17.9 17.9A10.4 10.4 0 0 1 12 19c-7 0-11-7-11-7a18 18 0 0 1 5.1-5.9"/><path d="M9.9 4.2A10.9 10.9 0 0 1 12 4c7 0 11 7 11 7a18 18 0 0 1-2.2 3.2"/><path d="M1 1l22 22"/>',
+  arrastar: '<circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/>',
+  baixar: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>',
+  zap: '<path d="M21 11.5a8.4 8.4 0 0 1-12.5 7.3L3 20.5l1.7-5.4A8.5 8.5 0 1 1 21 11.5z"/>',
+  estrela: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.2-5.4-2.9-5.4 2.9 1-6.2L3.2 9.5l6.1-.9z"/>',
+  esquerda: '<path d="M15 18l-6-6 6-6"/>',
+  direita: '<path d="M9 18l6-6-6-6"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>'
+};
+const svg = (nome, extra) => '<svg viewBox="0 0 24 24" ' + (extra || '') + '>' + ICONES[nome] + '</svg>';
+
+/* ============================================================
+   1. A CONFERÊNCIA DA SESSÃO
+   Isto é a primeira coisa que roda. Sem sessão, vai pro login
+   e a página nem chega a aparecer.
+   ============================================================ */
+let usuario = null;
+
+(async function entrada() {
+  if (!window.db) {
+    document.body.classList.remove('verificando');
+    painel.innerHTML = '<p class="aviso erro">Não consegui carregar a conexão com o banco. Recarregue a página.</p>';
+    return;
+  }
+  let sessao = null;
+  try {
+    const { data } = await window.db.auth.getSession();
+    sessao = data ? data.session : null;
+  } catch (e) {}
+  if (!sessao) { location.replace('../login/'); return; }
+
+  usuario = sessao.user;
+  $('#emailLogado').textContent = usuario.email || '';
+  document.body.classList.remove('verificando');
+  montarMenu();
+  abrir(location.hash.replace('#', '') || 'portfolio');
+})();
+
+$('#btnSair').addEventListener('click', async function () {
+  try { await window.db.auth.signOut(); } catch (e) {}
+  location.replace('../login/');
+});
+
+/* ============================================================
+   2. O MENU LATERAL
+   ============================================================ */
+const ABAS = [
+  { grupo: 'meu site',     id: 'portfolio',  nome: 'Portfólio',  icone: 'portfolio',  dica: 'O que aparece no seu site e quem está visitando' },
+  { grupo: 'meu site',     id: 'marcas',     nome: 'Marcas',     icone: 'marcas',     dica: 'A sua base de contatos de empresa' },
+  { grupo: 'minha rotina', id: 'calendario', nome: 'Calendário', icone: 'calendario', dica: 'Gravar, editar e postar' },
+  { grupo: 'minha rotina', id: 'campanhas',  nome: 'Campanhas',  icone: 'campanhas',  dica: 'Trabalhos fechados, prazos e pagamentos' },
+  { grupo: 'minha rotina', id: 'checklist',  nome: 'Checklist',  icone: 'checklist',  dica: 'O que ainda falta no seu portfólio' }
+];
+
+function montarMenu() {
+  let html = '', grupoAtual = '';
+  ABAS.forEach(a => {
+    if (a.grupo !== grupoAtual) { grupoAtual = a.grupo; html += '<p class="grupo">' + esc(grupoAtual) + '</p>'; }
+    html += '<button class="item" type="button" data-aba="' + a.id + '">' + svg(a.icone) + esc(a.nome) + '</button>';
+  });
+  $('#navegacao').innerHTML = html;
+  $$('#navegacao .item').forEach(b => b.addEventListener('click', () => abrir(b.dataset.aba)));
+}
+
+$('#btnMenu').addEventListener('click', () => document.body.classList.add('menu-aberto'));
+$('#sombraMenu').addEventListener('click', () => document.body.classList.remove('menu-aberto'));
+
+let abaAtual = '';
+function abrir(id) {
+  const aba = ABAS.find(a => a.id === id) || ABAS[0];
+  abaAtual = aba.id;
+  history.replaceState(null, '', '#' + aba.id);
+  $$('#navegacao .item').forEach(b => {
+    if (b.dataset.aba === aba.id) b.setAttribute('aria-current', 'page');
+    else b.removeAttribute('aria-current');
+  });
+  $('#tituloAba').textContent = aba.nome;
+  $('#dicaAba').textContent = aba.dica;
+  document.body.classList.remove('menu-aberto');
+  painel.innerHTML = '<p class="vazio">Carregando...</p>';
+  ({ portfolio: telaPortfolio, marcas: telaMarcas, calendario: telaCalendario, campanhas: telaCampanhas, checklist: telaChecklist })[aba.id]();
+}
+
+/* ============================================================
+   3. JANELA DE FORMULÁRIO
+   Um formulário genérico, usado por todas as abas.
+   campos: [{k:'titulo', r:'Título', tipo:'text'|'select'|'data'|'numero'|'texto', opcoes:[], req:true}]
+   ============================================================ */
+function abrirForm(titulo, campos, valores, aoSalvar, aoApagar) {
+  const fundo = document.createElement('div');
+  fundo.className = 'fundo';
+  const corpo = campos.map(c => {
+    const v = valores && valores[c.k] != null ? valores[c.k] : (c.padrao != null ? c.padrao : '');
+    const id = 'f_' + c.k;
+    let entrada;
+    if (c.tipo === 'select') {
+      entrada = '<select id="' + id + '">' + c.opcoes.map(o =>
+        '<option value="' + esc(o) + '"' + (String(v) === String(o) ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>';
+    } else if (c.tipo === 'texto') {
+      entrada = '<textarea id="' + id + '">' + esc(v) + '</textarea>';
+    } else {
+      const t = c.tipo === 'data' ? 'date' : (c.tipo === 'numero' ? 'number' : 'text');
+      const passo = c.tipo === 'numero' ? ' step="' + (c.passo || '1') + '" min="0"' : '';
+      entrada = '<input id="' + id + '" type="' + t + '" value="' + esc(v) + '"' + passo + '>';
+    }
+    return '<div class="campo"><label for="' + id + '">' + esc(c.r) + '</label>' + entrada + '</div>';
+  }).join('');
+
+  fundo.innerHTML =
+    '<div class="janela" role="dialog" aria-modal="true" aria-label="' + esc(titulo) + '">' +
+      '<h2>' + esc(titulo) + '</h2>' +
+      '<form id="jf">' + corpo +
+        '<p class="aviso erro" id="jerro" hidden></p>' +
+        '<div class="rodape">' +
+          (aoApagar ? '<button type="button" class="btn claro mini esq" id="jdel">Apagar</button>' : '') +
+          '<button type="button" class="btn claro" id="jcancel">Cancelar</button>' +
+          '<button type="submit" class="btn" id="jok">Salvar</button>' +
+        '</div>' +
+      '</form>' +
+    '</div>';
+  document.body.appendChild(fundo);
+
+  const fechar = () => { fundo.remove(); document.removeEventListener('keydown', esc2); };
+  const esc2 = e => { if (e.key === 'Escape') fechar(); };
+  document.addEventListener('keydown', esc2);
+  fundo.addEventListener('click', e => { if (e.target === fundo) fechar(); });
+  $('#jcancel', fundo).addEventListener('click', fechar);
+  const primeiro = fundo.querySelector('input,select,textarea');
+  if (primeiro) primeiro.focus();
+
+  if (aoApagar) $('#jdel', fundo).addEventListener('click', async () => {
+    if (!confirm('Apagar para sempre? Isso não tem como desfazer.')) return;
+    await aoApagar();
+    fechar();
+  });
+
+  $('#jf', fundo).addEventListener('submit', async e => {
+    e.preventDefault();
+    const dados = {};
+    let falta = '';
+    campos.forEach(c => {
+      let v = $('#f_' + c.k, fundo).value;
+      if (c.tipo === 'numero') v = v === '' ? 0 : Number(v);
+      if (typeof v === 'string') v = v.trim();
+      if (c.req && (v === '' || v == null)) falta = falta || c.r;
+      dados[c.k] = v === '' && c.tipo === 'data' ? null : v;
+    });
+    if (falta) {
+      const p = $('#jerro', fundo);
+      p.textContent = 'Preencha o campo ' + falta + '.'; p.hidden = false;
+      return;
+    }
+    const botao = $('#jok', fundo);
+    botao.disabled = true; botao.textContent = 'Salvando...';
+    const erro = await aoSalvar(dados);
+    if (erro) {
+      const p = $('#jerro', fundo);
+      p.textContent = erro; p.hidden = false;
+      botao.disabled = false; botao.textContent = 'Salvar';
+      return;
+    }
+    fechar();
+  });
+}
+
+/* Grava no banco e devolve texto de erro em português, ou nada se deu certo */
+async function gravar(tabela, dados, id) {
+  if (!window.db) return 'Sem conexão com o banco.';
+  try {
+    const r = id
+      ? await window.db.from(tabela).update(dados).eq('id', id)
+      : await window.db.from(tabela).insert(dados);
+    if (r.error) {
+      return window.faltaNoBanco(r.error)
+        ? 'A tabela "' + tabela + '" ainda não existe. Rode o banco.sql no Supabase.'
+        : 'Não consegui salvar: ' + (r.error.message || 'erro desconhecido');
+    }
+    return null;
+  } catch (e) { return 'Não consegui falar com o banco agora.'; }
+}
+async function apagar(tabela, id) {
+  try {
+    const { error } = await window.db.from(tabela).delete().eq('id', id);
+    if (error) { recado('Não consegui apagar.'); return false; }
+    return true;
+  } catch (e) { recado('Não consegui apagar.'); return false; }
+}
+
+/* Baixar CSV que abre certinho no Excel, com acento.
+   O ﻿ na frente e o ponto e vírgula fazem o Excel entender. */
+function baixarCSV(nome, cabecalhos, linhas) {
+  const limpa = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const txt = '﻿' + [cabecalhos.map(limpa).join(';')]
+    .concat(linhas.map(l => l.map(limpa).join(';'))).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8;' }));
+  a.download = nome + '-' + hojeISO() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+
+/* ============================================================
+   4. ABA PORTFÓLIO
+   ============================================================ */
+const NICHOS_VIDEO = ['beleza', 'fitness', 'maternidade', 'tech'];
+const FORMATOS = ['Vídeo UGC', 'Corte para anúncio', 'Fotos do produto', 'Unboxing', 'Publicação no meu perfil'];
+
+async function telaPortfolio() {
+  const rv = await window.lerTabela('videos', q => q.order('ordem', { ascending: true }));
+  const rvis = await window.lerTabela('visitas');
+  anotarProblema(rv.erro); anotarProblema(rvis.erro);
+  const videos = rv.dados, visitas = rvis.dados;
+
+  /* últimos 14 dias */
+  const dias = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    dias.push({ iso: dISO(d), qtd: 0 });
+  }
+  const mapa = {}; dias.forEach(d => mapa[d.iso] = d);
+  const origens = {};
+  visitas.forEach(v => {
+    const iso = String(v.data || '').slice(0, 10);
+    if (mapa[iso]) mapa[iso].qtd++;
+    const o = (v.origem || 'direto').toLowerCase();
+    origens[o] = (origens[o] || 0) + 1;
+  });
+  const total14 = dias.reduce((s, d) => s + d.qtd, 0);
+  const hoje = mapa[hojeISO()] ? mapa[hojeISO()].qtd : 0;
+  const noAr = videos.filter(v => v.visivel !== false).length;
+
+  /* nicho mais forte, sem dividir por zero */
+  const contaNicho = {};
+  videos.filter(v => v.visivel !== false).forEach(v => {
+    const n = (v.nicho || '').trim(); if (n) contaNicho[n] = (contaNicho[n] || 0) + 1;
+  });
+  const topNicho = Object.keys(contaNicho).sort((a, b) => contaNicho[b] - contaNicho[a])[0];
+  const topOrigem = Object.keys(origens).sort((a, b) => origens[b] - origens[a])[0];
+  const maior = Math.max.apply(null, dias.map(d => d.qtd).concat([0]));
+
+  const grafico = total14 === 0
+    ? '<p class="vazio">Aqui vai aparecer um gráfico com as visitas de cada dia, assim que as pessoas começarem a entrar no seu portfólio. Cada barra é um dia.</p>'
+    : '<div class="grafico">' + dias.map(d =>
+        '<div class="barra" title="' + dataBonita(d.iso) + ': ' + d.qtd + '">' +
+          '<i class="' + (d.qtd === 0 ? 'zero' : '') + '" style="height:' + (maior > 0 ? Math.max(2, Math.round(d.qtd / maior * 105)) : 2) + 'px"></i>' +
+          '<span>' + d.iso.slice(8) + '</span></div>').join('') + '</div>';
+
+  const listaOrigens = Object.keys(origens).length === 0
+    ? '<p class="vazio">Quando alguém visitar, aqui mostra de onde a pessoa veio: Instagram, Google ou direto.</p>'
+    : '<ul class="lista-origens">' + Object.keys(origens).sort((a, b) => origens[b] - origens[a]).map(o =>
+        '<li><span>' + esc(o) + '</span><b>' + origens[o] + '</b></li>').join('') + '</ul>';
+
+  painel.innerHTML =
+    '<div class="faixa">' +
+      kpi(total14, 'visitas em 14 dias') +
+      kpi(hoje, 'visitas hoje') +
+      kpi(noAr, 'vídeos no ar') +
+      kpi(topNicho ? topNicho : 'sem dados', 'nicho mais forte', topNicho ? contaNicho[topNicho] + ' vídeos' : 'cadastre vídeos') +
+      kpi(topOrigem ? topOrigem : 'sem dados', 'de onde mais vêm', topOrigem ? origens[topOrigem] + ' visitas' : 'ainda sem visita') +
+    '</div>' +
+    '<div class="caixa"><h2>Visitas dos últimos 14 dias</h2>' + grafico + '</div>' +
+    '<div class="caixa"><h2>Por onde chegaram</h2>' + listaOrigens + '</div>' +
+    '<div class="caixa">' +
+      '<div class="ferramentas" style="justify-content:space-between">' +
+        '<h2 style="margin:0">Meus vídeos</h2>' +
+        '<button class="btn" id="novoVideo" type="button">' + svg('mais') + 'Adicionar vídeo</button>' +
+      '</div>' +
+      (videos.length === 0
+        ? '<p class="vazio">Nenhum vídeo ainda. Clique em adicionar vídeo e ele aparece no seu site na hora.</p>'
+        : '<div class="rolagem"><table><thead><tr>' +
+            '<th style="width:26px"></th><th>Título</th><th>Nicho</th><th>Formato</th><th>Marca</th><th>Destaque</th><th style="text-align:right">Ações</th>' +
+          '</tr></thead><tbody id="corpoVideos">' + videos.map(linhaVideo).join('') + '</tbody></table></div>' +
+          '<p class="dica" style="font-size:11.5px;color:var(--lapis);margin-top:8px">Arraste pela alcinha da esquerda para mudar a ordem. O olhinho mostra ou esconde do site.</p>') +
+    '</div>';
+
+  $('#novoVideo').addEventListener('click', () => formVideo(null, videos.length));
+  ligarVideos(videos);
+  mostrarProblemas();
+}
+
+function kpi(valor, rotulo, embaixo) {
+  return '<div class="kpi"><b>' + esc(valor) + '</b><span>' + esc(rotulo) + '</span>' +
+    (embaixo ? '<em>' + esc(embaixo) + '</em>' : '') + '</div>';
+}
+
+function linhaVideo(v) {
+  const escondido = v.visivel === false;
+  return '<tr data-id="' + esc(v.id) + '" draggable="true" class="' + (escondido ? 'apagado' : '') + '">' +
+    '<td class="puxador">' + svg('arrastar', 'style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2"') + '</td>' +
+    '<td><b>' + esc(v.titulo) + '</b></td>' +
+    '<td>' + (v.nicho ? '<span class="tag t-oliva">' + esc(v.nicho) + '</span>' : '') + '</td>' +
+    '<td>' + esc(v.formato || '') + '</td>' +
+    '<td>' + esc(v.marca || '') + '</td>' +
+    '<td>' + esc(v.destaque || '') + '</td>' +
+    '<td class="acoes">' +
+      '<button class="icone ver" type="button" title="' + (escondido ? 'Mostrar no site' : 'Esconder do site') + '" aria-label="' + (escondido ? 'Mostrar no site' : 'Esconder do site') + '">' + svg(escondido ? 'olhoCortado' : 'olho') + '</button>' +
+      '<button class="icone edi" type="button" title="Editar" aria-label="Editar">' + svg('lapis') + '</button>' +
+      '<button class="icone del" type="button" title="Apagar" aria-label="Apagar">' + svg('lixo') + '</button>' +
+    '</td></tr>';
+}
+
+function ligarVideos(videos) {
+  const corpo = $('#corpoVideos');
+  if (!corpo) return;
+  const achar = id => videos.find(v => String(v.id) === String(id));
+
+  $$('#corpoVideos .ver').forEach(b => b.addEventListener('click', async e => {
+    const tr = e.target.closest('tr'), v = achar(tr.dataset.id);
+    const erro = await gravar('videos', { visivel: !(v.visivel !== false) }, v.id);
+    if (erro) { recado(erro); return; }
+    recado(v.visivel !== false ? 'Escondido do site' : 'Aparecendo no site');
+    telaPortfolio();
+  }));
+  $$('#corpoVideos .edi').forEach(b => b.addEventListener('click', e => {
+    formVideo(achar(e.target.closest('tr').dataset.id));
+  }));
+  $$('#corpoVideos .del').forEach(b => b.addEventListener('click', async e => {
+    const v = achar(e.target.closest('tr').dataset.id);
+    if (!confirm('Apagar o vídeo "' + v.titulo + '"? Isso não tem como desfazer.')) return;
+    if (await apagar('videos', v.id)) { recado('Vídeo apagado'); telaPortfolio(); }
+  }));
+
+  /* arrastar para reordenar */
+  let arrastando = null;
+  $$('#corpoVideos tr').forEach(tr => {
+    tr.addEventListener('dragstart', () => { arrastando = tr; tr.classList.add('arrastando'); });
+    tr.addEventListener('dragend', () => { tr.classList.remove('arrastando'); });
+    tr.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!arrastando || arrastando === tr) return;
+      const meio = tr.getBoundingClientRect().top + tr.offsetHeight / 2;
+      corpo.insertBefore(arrastando, e.clientY < meio ? tr : tr.nextSibling);
+    });
+    tr.addEventListener('drop', async e => {
+      e.preventDefault();
+      const ids = $$('#corpoVideos tr').map(x => x.dataset.id);
+      for (let i = 0; i < ids.length; i++) await gravar('videos', { ordem: i + 1 }, ids[i]);
+      recado('Ordem salva');
+      telaPortfolio();
+    });
+  });
+}
+
+function formVideo(v, quantos) {
+  const campos = [
+    { k: 'titulo', r: 'Título', tipo: 'text', req: true },
+    { k: 'link', r: 'Link do vídeo', tipo: 'text' },
+    { k: 'nicho', r: 'Nicho', tipo: 'select', opcoes: NICHOS_VIDEO },
+    { k: 'formato', r: 'Formato', tipo: 'select', opcoes: FORMATOS },
+    { k: 'marca', r: 'Marca', tipo: 'text' },
+    { k: 'destaque', r: 'Destaque (ex: 2,4M views)', tipo: 'text' },
+    { k: 'ordem', r: 'Ordem', tipo: 'numero', padrao: (quantos || 0) + 1 }
+  ];
+  abrirForm(v ? 'Editar vídeo' : 'Novo vídeo', campos, v, async dados => {
+    const erro = await gravar('videos', dados, v ? v.id : null);
+    if (erro) return erro;
+    recado(v ? 'Vídeo salvo' : 'Vídeo adicionado');
+    telaPortfolio();
+    return null;
+  });
+}
+
+/* ============================================================
+   5. ABA MARCAS
+   ============================================================ */
+const SITUACOES = ['lead', 'conversando', 'cliente', 'parada'];
+const CORSIT = { lead: 't-azul', conversando: 't-mostarda', cliente: 't-oliva', parada: 't-cinza' };
+let buscaMarca = '', filtroSituacao = 'todas';
+
+async function telaMarcas() {
+  const r = await window.lerTabela('marcas', q => q.order('criado_em', { ascending: false }));
+  anotarProblema(r.erro);
+  const todas = r.dados;
+
+  const t = buscaMarca.toLowerCase();
+  const lista = todas.filter(m => {
+    if (filtroSituacao !== 'todas' && (m.situacao || 'lead') !== filtroSituacao) return false;
+    if (!t) return true;
+    return [m.nome, m.instagram, m.email].some(x => String(x || '').toLowerCase().includes(t));
+  });
+
+  painel.innerHTML =
+    '<div class="ferramentas">' +
+      '<input id="buscaM" type="search" placeholder="Buscar por nome, arroba ou e-mail" value="' + esc(buscaMarca) + '" aria-label="Buscar marca">' +
+      '<select id="filtroM" aria-label="Filtrar por situação">' +
+        ['todas'].concat(SITUACOES).map(s => '<option value="' + s + '"' + (filtroSituacao === s ? ' selected' : '') + '>' + (s === 'todas' ? 'Todas as situações' : s[0].toUpperCase() + s.slice(1)) + '</option>').join('') +
+      '</select>' +
+      '<button class="btn" id="novaMarca" type="button">' + svg('mais') + 'Adicionar marca</button>' +
+      '<button class="btn claro" id="baixarM" type="button">' + svg('baixar') + 'Baixar CSV</button>' +
+    '</div>' +
+    '<div class="caixa">' +
+      (lista.length === 0
+        ? '<p class="vazio">' + (todas.length === 0 ? 'Nenhuma marca ainda. Os contatos que chegarem pelo formulário do seu site entram aqui sozinhos, como Lead.' : 'Nenhuma marca encontrada com esse filtro.') + '</p>'
+        : '<div class="rolagem"><table><thead><tr>' +
+            '<th>Marca</th><th>Instagram</th><th>E-mail</th><th>Telefone</th><th>Situação</th><th>Observação</th><th>Último contato</th>' +
+          '</tr></thead><tbody id="corpoMarcas">' + lista.map(linhaMarca).join('') + '</tbody></table></div>' +
+          '<p style="font-size:11.5px;color:var(--lapis);margin-top:8px">Clique na linha para editar. ' + lista.length + ' de ' + todas.length + ' marcas.</p>') +
+    '</div>';
+
+  $('#buscaM').addEventListener('input', e => { buscaMarca = e.target.value; telaMarcas(); });
+  $('#filtroM').addEventListener('change', e => { filtroSituacao = e.target.value; telaMarcas(); });
+  $('#novaMarca').addEventListener('click', () => formMarca(null));
+  $('#baixarM').addEventListener('click', () => {
+    if (!lista.length) { recado('Nada para baixar ainda.'); return; }
+    baixarCSV('marcas', ['Marca', 'Instagram', 'E-mail', 'Telefone', 'Situação', 'Observação', 'Último contato'],
+      lista.map(m => [m.nome, m.instagram, m.email, m.telefone, m.situacao, m.obs, dataBonita(m.ultimo_contato)]));
+  });
+
+  $$('#corpoMarcas tr').forEach(tr => {
+    tr.addEventListener('click', e => {
+      if (e.target.closest('a,button')) return;
+      formMarca(todas.find(m => String(m.id) === String(tr.dataset.id)));
+    });
+  });
+  mostrarProblemas();
+}
+
+function linhaMarca(m) {
+  const sit = (m.situacao || 'lead');
+  const arroba = String(m.instagram || '').replace('@', '');
+  const fone = String(m.telefone || '').replace(/\D/g, '');
+  return '<tr class="clicavel" data-id="' + esc(m.id) + '">' +
+    '<td><b>' + esc(m.nome) + '</b></td>' +
+    '<td>' + (arroba ? '<a href="https://instagram.com/' + esc(arroba) + '" target="_blank" rel="noopener">@' + esc(arroba) + '</a>' : '') + '</td>' +
+    '<td>' + (m.email ? '<a href="mailto:' + esc(m.email) + '">' + esc(m.email) + '</a>' : '') + '</td>' +
+    '<td>' + (fone
+      ? esc(m.telefone) + ' <a class="icone" href="https://wa.me/' + (fone.length <= 11 ? '55' + fone : fone) + '" target="_blank" rel="noopener" title="Abrir no WhatsApp" aria-label="Abrir no WhatsApp">' + svg('zap') + '</a>'
+      : '') + '</td>' +
+    '<td><span class="tag ' + (CORSIT[sit] || 't-cinza') + '">' + esc(sit) + '</span></td>' +
+    '<td>' + esc(String(m.obs || '').slice(0, 60)) + '</td>' +
+    '<td>' + esc(dataBonita(m.ultimo_contato)) + '</td></tr>';
+}
+
+function formMarca(m) {
+  const campos = [
+    { k: 'nome', r: 'Marca', tipo: 'text', req: true },
+    { k: 'instagram', r: 'Instagram', tipo: 'text' },
+    { k: 'email', r: 'E-mail', tipo: 'text' },
+    { k: 'telefone', r: 'Telefone', tipo: 'text' },
+    { k: 'situacao', r: 'Situação', tipo: 'select', opcoes: SITUACOES },
+    { k: 'ultimo_contato', r: 'Último contato', tipo: 'data', padrao: hojeISO() },
+    { k: 'obs', r: 'Observação', tipo: 'texto' }
+  ];
+  abrirForm(m ? 'Editar marca' : 'Nova marca', campos, m, async dados => {
+    const erro = await gravar('marcas', dados, m ? m.id : null);
+    if (erro) return erro;
+    recado(m ? 'Marca salva' : 'Marca adicionada');
+    telaMarcas();
+    return null;
+  }, m ? async () => { if (await apagar('marcas', m.id)) { recado('Marca apagada'); telaMarcas(); } } : null);
+}
+
+/* ============================================================
+   6. ABA CALENDÁRIO
+   ============================================================ */
+const TIPOS_AGENDA = ['gravar', 'editar', 'postar'];
+let mesVisto = new Date(); mesVisto.setDate(1);
+let filtroTipo = 'todos';
+
+async function telaCalendario() {
+  const ra = await window.lerTabela('calendario');
+  const rc = await window.lerTabela('campanhas');
+  anotarProblema(ra.erro); anotarProblema(rc.erro);
+
+  /* prazos das campanhas entram no calendário sozinhos, só para ver */
+  const daCampanha = rc.dados.filter(c => c.prazo && c.status !== 'Entregue').map(c => ({
+    id: 'c_' + c.id, titulo: 'Prazo: ' + c.campanha, marca: c.cliente || '',
+    tipo: 'prazo', data: String(c.prazo).slice(0, 10), status: 'a fazer', soLeitura: true
+  }));
+  const itens = ra.dados.map(x => ({ ...x, data: String(x.data || '').slice(0, 10) })).concat(daCampanha);
+  const visiveis = itens.filter(i => filtroTipo === 'todos' || i.tipo === filtroTipo);
+
+  const porDia = {};
+  visiveis.forEach(i => { (porDia[i.data] = porDia[i.data] || []).push(i); });
+
+  /* grade de segunda a domingo */
+  const ano = mesVisto.getFullYear(), mes = mesVisto.getMonth();
+  const primeiro = new Date(ano, mes, 1);
+  let desloca = primeiro.getDay() - 1; if (desloca < 0) desloca = 6;   // segunda = 0
+  const inicio = new Date(ano, mes, 1 - desloca);
+  const hoje = hojeISO();
+
+  let celulas = '';
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(inicio); d.setDate(inicio.getDate() + i);
+    const iso = dISO(d), fora = d.getMonth() !== mes;
+    const lista = porDia[iso] || [];
+    const mostra = lista.slice(0, 3), sobra = lista.length - mostra.length;
+    celulas +=
+      '<div class="dia' + (fora ? ' fora' : '') + (iso === hoje ? ' hoje' : '') + '" data-dia="' + iso + '">' +
+        '<span class="num">' + d.getDate() + '</span>' +
+        '<button class="icone mais-dia" type="button" data-novo="' + iso + '" title="Adicionar neste dia" aria-label="Adicionar em ' + dataBonita(iso) + '">' + svg('mais') + '</button>' +
+        mostra.map(ev =>
+          '<button class="evento e-' + esc(ev.tipo) + (ev.status === 'feito' ? ' feito' : '') + '" type="button" data-ev="' + esc(ev.id) + '" title="' + esc(ev.titulo) + '">' + esc(ev.titulo) + '</button>').join('') +
+        (sobra > 0 ? '<button class="mais" type="button" data-verdia="' + iso + '">mais ' + sobra + '</button>' : '') +
+      '</div>';
+  }
+
+  /* ficou pra trás */
+  const atrasados = itens.filter(i => !i.soLeitura && i.status !== 'feito' && i.data && i.data < hoje)
+    .sort((a, b) => a.data < b.data ? 1 : -1);
+
+  const nomeMes = mesVisto.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+
+  painel.innerHTML =
+    '<div class="ferramentas" style="justify-content:space-between">' +
+      '<div class="nav-mes">' +
+        '<button class="icone" id="mesAnt" type="button" aria-label="Mês anterior">' + svg('esquerda') + '</button>' +
+        '<b>' + esc(nomeMes) + '</b>' +
+        '<button class="icone" id="mesProx" type="button" aria-label="Próximo mês">' + svg('direita') + '</button>' +
+        '<button class="btn claro mini" id="mesHoje" type="button">Este mês</button>' +
+      '</div>' +
+      '<div class="pilulas">' +
+        ['todos'].concat(TIPOS_AGENDA).map(t =>
+          '<button class="pilula" type="button" data-tipo="' + t + '" aria-pressed="' + (filtroTipo === t) + '">' + t + '</button>').join('') +
+        '<button class="btn" id="novoEvento" type="button">' + svg('mais') + 'Adicionar</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="mes">' +
+      ['seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'dom'].map(d => '<div class="nome-dia">' + d + '</div>').join('') +
+      celulas +
+    '</div>' +
+    '<p style="font-size:11.5px;color:var(--lapis);margin:8px 0 0">Os prazos em amarelo vêm das campanhas. Para mudar um prazo, edite a campanha.</p>' +
+    '<div class="caixa"><h2>Ficou pra trás</h2>' +
+      (atrasados.length === 0
+        ? '<p class="vazio">Nada atrasado. Está tudo em dia.</p>'
+        : '<div class="rolagem"><table><tbody>' + atrasados.map(a => {
+            const d = diasEntre(a.data, hoje);
+            return '<tr class="clicavel" data-ev="' + esc(a.id) + '"><td><b>' + esc(a.titulo) + '</b></td>' +
+              '<td><span class="tag ' + (a.tipo === 'gravar' ? 't-tomate' : a.tipo === 'editar' ? 't-azul' : 't-oliva') + '">' + esc(a.tipo) + '</span></td>' +
+              '<td>' + esc(dataBonita(a.data)) + '</td>' +
+              '<td><span class="tag t-tomate">' + d + (d === 1 ? ' dia' : ' dias') + ' atrás</span></td></tr>';
+          }).join('') + '</tbody></table></div>') +
+    '</div>';
+
+  $('#mesAnt').addEventListener('click', () => { mesVisto.setMonth(mesVisto.getMonth() - 1); telaCalendario(); });
+  $('#mesProx').addEventListener('click', () => { mesVisto.setMonth(mesVisto.getMonth() + 1); telaCalendario(); });
+  $('#mesHoje').addEventListener('click', () => { mesVisto = new Date(); mesVisto.setDate(1); telaCalendario(); });
+  $('#novoEvento').addEventListener('click', () => formEvento(null, hoje));
+  $$('.pilula[data-tipo]').forEach(b => b.addEventListener('click', () => { filtroTipo = b.dataset.tipo; telaCalendario(); }));
+  $$('[data-novo]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); formEvento(null, b.dataset.novo); }));
+  $$('.dia').forEach(c => c.addEventListener('click', e => {
+    if (e.target.closest('button')) return;
+    formEvento(null, c.dataset.dia);
+  }));
+  $$('[data-ev]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = b.dataset.ev;
+    if (String(id).startsWith('c_')) { recado('Isso é um prazo de campanha. Edite na aba Campanhas.'); return; }
+    formEvento(ra.dados.find(x => String(x.id) === String(id)));
+  }));
+  $$('[data-verdia]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    verDia(b.dataset.verdia, porDia[b.dataset.verdia] || []);
+  }));
+  mostrarProblemas();
+}
+
+function verDia(iso, lista) {
+  const fundo = document.createElement('div');
+  fundo.className = 'fundo';
+  fundo.innerHTML = '<div class="janela" role="dialog" aria-modal="true" aria-label="Dia ' + dataBonita(iso) + '">' +
+    '<h2>' + dataBonita(iso) + '</h2>' +
+    lista.map(i => '<p><span class="tag ' + (i.tipo === 'gravar' ? 't-tomate' : i.tipo === 'editar' ? 't-azul' : i.tipo === 'prazo' ? 't-mostarda' : 't-oliva') + '">' + esc(i.tipo) + '</span> ' +
+      esc(i.titulo) + (i.marca ? ' <span style="color:var(--lapis)">' + esc(i.marca) + '</span>' : '') + '</p>').join('') +
+    '<div class="rodape"><button class="btn claro" id="fecha">Fechar</button></div></div>';
+  document.body.appendChild(fundo);
+  const fechar = () => fundo.remove();
+  $('#fecha', fundo).addEventListener('click', fechar);
+  fundo.addEventListener('click', e => { if (e.target === fundo) fechar(); });
+}
+
+function formEvento(ev, dataPadrao) {
+  const campos = [
+    { k: 'titulo', r: 'O que é', tipo: 'text', req: true },
+    { k: 'marca', r: 'Marca', tipo: 'text' },
+    { k: 'tipo', r: 'Tipo', tipo: 'select', opcoes: TIPOS_AGENDA },
+    { k: 'data', r: 'Data', tipo: 'data', req: true, padrao: dataPadrao || hojeISO() },
+    { k: 'status', r: 'Status', tipo: 'select', opcoes: ['a fazer', 'feito'] }
+  ];
+  abrirForm(ev ? 'Editar item' : 'Novo item na agenda', campos, ev, async dados => {
+    const erro = await gravar('calendario', dados, ev ? ev.id : null);
+    if (erro) return erro;
+    recado(ev ? 'Item salvo' : 'Item adicionado');
+    telaCalendario();
+    return null;
+  }, ev ? async () => { if (await apagar('calendario', ev.id)) { recado('Item apagado'); telaCalendario(); } } : null);
+}
+
+/* ============================================================
+   7. ABA CAMPANHAS
+   ============================================================ */
+const FUNIL = ['Briefing', 'Roteiro', 'Aprovação Roteiro', 'Gravação', 'Edição', 'Aprovado', 'Entregue'];
+const TIPOS_CAMP = ['Conteúdo', 'Publicidade'];
+let filtroCamp = 'todas', buscaCamp = '', ordemCol = 'prazo', ordemAsc = true;
+
+async function telaCampanhas() {
+  const r = await window.lerTabela('campanhas');
+  anotarProblema(r.erro);
+  const todas = r.dados;
+
+  const t = buscaCamp.toLowerCase();
+  let lista = todas.filter(c => {
+    if (filtroCamp === 'ativas' && !c.ativa) return false;
+    if (filtroCamp === 'finalizadas' && c.ativa) return false;
+    if (!t) return true;
+    return [c.campanha, c.cliente].some(x => String(x || '').toLowerCase().includes(t));
+  });
+
+  /* ordenação. Status segue a ordem do funil, nunca a alfabética. */
+  lista.sort((a, b) => {
+    let x = a[ordemCol], y = b[ordemCol];
+    if (ordemCol === 'status') { x = FUNIL.indexOf(a.status); y = FUNIL.indexOf(b.status); }
+    if (ordemCol === 'favorita') { x = a.favorita ? 1 : 0; y = b.favorita ? 1 : 0; }
+    if (ordemCol === 'valor' || ordemCol === 'qtd') { x = Number(x) || 0; y = Number(y) || 0; }
+    if (x == null) x = ''; if (y == null) y = '';
+    if (typeof x === 'string') { const c = x.localeCompare(y, 'pt-BR'); return ordemAsc ? c : -c; }
+    return ordemAsc ? (x > y ? 1 : x < y ? -1 : 0) : (x < y ? 1 : x > y ? -1 : 0);
+  });
+
+  /* contas, sempre protegidas de divisão por zero */
+  const somaValor = todas.reduce((s, c) => s + (Number(c.valor) || 0), 0);
+  const somaQtd = todas.reduce((s, c) => s + (Number(c.qtd) || 0), 0);
+  const ativas = todas.filter(c => c.ativa).length;
+  const receber = todas.filter(c => c.pagamento !== 'pago').reduce((s, c) => s + (Number(c.valor) || 0), 0);
+  const recebido = somaValor - receber;
+  const ticket = somaQtd > 0 ? somaValor / somaQtd : 0;
+
+  painel.innerHTML =
+    '<div class="faixa q4">' +
+      kpi(todas.length, 'campanhas') +
+      kpi(ativas, 'ativas', (todas.length - ativas) + ' finalizadas') +
+      kpi(dinheiro(somaValor), 'valor total', somaQtd > 0 ? dinheiro(ticket) + ' por vídeo' : 'sem vídeo somado ainda') +
+      kpi(dinheiro(receber), 'a receber', dinheiro(recebido) + ' já recebido') +
+    '</div>' +
+    '<div class="ferramentas">' +
+      '<div class="pilulas">' +
+        [['todas', 'Todas'], ['ativas', 'Ativas'], ['finalizadas', 'Finalizadas']].map(f =>
+          '<button class="pilula" type="button" data-f="' + f[0] + '" aria-pressed="' + (filtroCamp === f[0]) + '">' + f[1] + '</button>').join('') +
+      '</div>' +
+      '<input id="buscaC" type="search" placeholder="Buscar campanha ou cliente" value="' + esc(buscaCamp) + '" aria-label="Buscar campanha">' +
+      '<button class="btn" id="novaCamp" type="button">' + svg('mais') + 'Adicionar</button>' +
+      '<button class="btn claro" id="baixarC" type="button">' + svg('baixar') + 'Baixar CSV</button>' +
+    '</div>' +
+    '<div class="caixa">' +
+      (lista.length === 0
+        ? '<p class="vazio">' + (todas.length === 0 ? 'Nenhuma campanha ainda. Clique em adicionar para registrar o primeiro trabalho fechado.' : 'Nenhuma campanha encontrada com esse filtro.') + '</p>'
+        : '<div class="rolagem"><table><thead><tr>' +
+            th('favorita', '') + th('campanha', 'Campanha') + th('cliente', 'Cliente') + th('tipo', 'Tipo') +
+            th('status', 'Status') + th('qtd', 'Qtd') + th('valor', 'Valor') + th('prazo', 'Prazo') + th('pagamento', 'Pagamento') +
+          '</tr></thead><tbody id="corpoCamp">' + lista.map(linhaCamp).join('') + '</tbody></table></div>') +
+    '</div>';
+
+  $$('.pilula[data-f]').forEach(b => b.addEventListener('click', () => { filtroCamp = b.dataset.f; telaCampanhas(); }));
+  $('#buscaC').addEventListener('input', e => { buscaCamp = e.target.value; telaCampanhas(); });
+  $('#novaCamp').addEventListener('click', () => formCamp(null));
+  $('#baixarC').addEventListener('click', () => {
+    if (!lista.length) { recado('Nada para baixar ainda.'); return; }
+    baixarCSV('campanhas', ['Campanha', 'Cliente', 'Tipo', 'Status', 'Qtd', 'Valor', 'Prazo', 'Pagamento', 'Ativa'],
+      lista.map(c => [c.campanha, c.cliente, c.tipo, c.status, c.qtd, String(Number(c.valor) || 0).replace('.', ','), dataBonita(c.prazo), c.pagamento, c.ativa ? 'sim' : 'não']));
+  });
+  $$('th.ord').forEach(h => h.addEventListener('click', () => {
+    if (ordemCol === h.dataset.col) ordemAsc = !ordemAsc; else { ordemCol = h.dataset.col; ordemAsc = true; }
+    telaCampanhas();
+  }));
+  $$('#corpoCamp .estrela').forEach(b => b.addEventListener('click', async e => {
+    e.stopPropagation();
+    const c = todas.find(x => String(x.id) === String(e.target.closest('tr').dataset.id));
+    const erro = await gravar('campanhas', { favorita: !c.favorita }, c.id);
+    if (erro) { recado(erro); return; }
+    telaCampanhas();
+  }));
+  $$('#corpoCamp tr').forEach(tr => tr.addEventListener('click', e => {
+    if (e.target.closest('button')) return;
+    formCamp(todas.find(c => String(c.id) === String(tr.dataset.id)));
+  }));
+  mostrarProblemas();
+}
+
+function th(col, nome) {
+  const ativa = ordemCol === col;
+  const seta = ativa ? (ordemAsc ? '&#8593;' : '&#8595;') : '&#8645;';
+  return '<th class="ord' + (ativa ? ' ativa' : '') + '" data-col="' + col + '" title="Clique para ordenar">' +
+    esc(nome) + '<span class="seta">' + seta + '</span></th>';
+}
+
+function avisoPrazo(c) {
+  if (!c.prazo || c.status === 'Entregue') return '';
+  const d = diasEntre(hojeISO(), String(c.prazo).slice(0, 10));
+  if (d < 0) return ' <span class="tag t-tomate">' + (-d) + (d === -1 ? ' dia atrasado' : ' dias atrasado') + '</span>';
+  if (d <= 3) return ' <span class="tag t-mostarda">' + (d === 0 ? 'vence hoje' : 'faltam ' + d + (d === 1 ? ' dia' : ' dias')) + '</span>';
+  return '';
+}
+
+function linhaCamp(c) {
+  const corStatus = c.status === 'Entregue' ? 't-oliva' : c.status === 'Aprovado' ? 't-azul' : 't-mostarda';
+  return '<tr class="clicavel' + (c.favorita ? ' destacada' : '') + '" data-id="' + esc(c.id) + '">' +
+    '<td><button class="icone estrela" type="button" title="Destacar" aria-label="Destacar campanha" style="color:' + (c.favorita ? '#a8811f' : 'var(--lapis)') + '">' +
+      '<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;stroke-width:1.6;fill:' + (c.favorita ? 'currentColor' : 'none') + ';stroke-linejoin:round">' + ICONES.estrela + '</svg></button></td>' +
+    '<td><b>' + esc(c.campanha) + '</b></td>' +
+    '<td>' + esc(c.cliente || '') + '</td>' +
+    '<td><span class="tag ' + (c.tipo === 'Publicidade' ? 't-tomate' : 't-azul') + '">' + esc(c.tipo || '') + '</span></td>' +
+    '<td><span class="tag ' + corStatus + '">' + esc(c.status || '') + '</span></td>' +
+    '<td>' + (Number(c.qtd) || 0) + '</td>' +
+    '<td>' + dinheiro(c.valor) + '</td>' +
+    '<td>' + esc(dataBonita(c.prazo)) + avisoPrazo(c) + '</td>' +
+    '<td><span class="tag ' + (c.pagamento === 'pago' ? 't-oliva' : 't-cinza') + '">' + esc(c.pagamento || 'pendente') + '</span></td></tr>';
+}
+
+function formCamp(c) {
+  const campos = [
+    { k: 'campanha', r: 'Campanha', tipo: 'text', req: true },
+    { k: 'cliente', r: 'Cliente', tipo: 'text' },
+    { k: 'tipo', r: 'Tipo', tipo: 'select', opcoes: TIPOS_CAMP },
+    { k: 'status', r: 'Status', tipo: 'select', opcoes: FUNIL },
+    { k: 'qtd', r: 'Quantidade de vídeos', tipo: 'numero', padrao: 1 },
+    { k: 'valor', r: 'Valor total em reais', tipo: 'numero', passo: '0.01', padrao: 0 },
+    { k: 'prazo', r: 'Prazo', tipo: 'data' },
+    { k: 'pagamento', r: 'Pagamento', tipo: 'select', opcoes: ['pendente', 'pago'] },
+    { k: 'ativa', r: 'Está ativa?', tipo: 'select', opcoes: ['sim', 'não'] }
+  ];
+  const v = c ? { ...c, ativa: c.ativa ? 'sim' : 'não' } : null;
+  abrirForm(c ? 'Editar campanha' : 'Nova campanha', campos, v, async dados => {
+    dados.ativa = dados.ativa === 'sim';
+    const erro = await gravar('campanhas', dados, c ? c.id : null);
+    if (erro) return erro;
+    recado(c ? 'Campanha salva' : 'Campanha adicionada');
+    telaCampanhas();
+    return null;
+  }, c ? async () => { if (await apagar('campanhas', c.id)) { recado('Campanha apagada'); telaCampanhas(); } } : null);
+}
+
+/* ============================================================
+   8. ABA CHECKLIST
+   Todo o conteúdo vem de window.Biblioteca, do arquivo
+   js/biblioteca.js. Nada aqui foi reescrito nem resumido.
+   ============================================================ */
+let subaba = 'checklist';
+let marcadosSet = new Set();
+
+async function telaChecklist() {
+  const B = window.Biblioteca;
+  if (!B) {
+    painel.innerHTML = '<p class="aviso erro">O arquivo js/biblioteca.js não carregou. Confira se ele está na pasta js do projeto.</p>';
+    return;
+  }
+  const r = await window.lerTabela('marcados');
+  anotarProblema(r.erro);
+  marcadosSet = new Set(r.dados.filter(m => m.marcado !== false).map(m => m.chave));
+
+  const SUB = [
+    ['checklist', 'Checklist do portfólio'],
+    ['refs', 'Referências de vídeo'],
+    ['roteiros', 'Roteiros'],
+    ['ideias', 'Ideias por nicho'],
+    ['revisar', 'Revisar meu roteiro']
+  ];
+  painel.innerHTML =
+    '<div class="subabas">' + SUB.map(s =>
+      '<button class="pilula" type="button" data-sub="' + s[0] + '" aria-pressed="' + (subaba === s[0]) + '">' + esc(s[1]) + '</button>').join('') +
+    '</div><div id="subconteudo"></div>';
+  $$('[data-sub]').forEach(b => b.addEventListener('click', () => { subaba = b.dataset.sub; telaChecklist(); }));
+
+  ({ checklist: subChecklist, refs: subRefs, roteiros: subRoteiros, ideias: subIdeias, revisar: subRevisar })[subaba](B);
+  mostrarProblemas();
+}
+
+async function marcar(chave, ligado) {
+  if (ligado) marcadosSet.add(chave); else marcadosSet.delete(chave);
+  if (!window.db) return;
+  try {
+    const { error } = await window.db.from('marcados').upsert({ chave: chave, marcado: ligado }, { onConflict: 'chave' });
+    if (error) recado(window.faltaNoBanco(error) ? 'A tabela marcados ainda não existe. Rode o banco.sql.' : 'Não consegui salvar a marcação.');
+  } catch (e) { recado('Não consegui salvar a marcação.'); }
+}
+
+function subChecklist(B) {
+  const secoes = B.CHECKLIST || [];
+  let feitosGeral = 0, totalGeral = 0;
+  const html = secoes.map(s => {
+    const feitos = s.itens.filter((it, i) => marcadosSet.has(s.id + '_' + i)).length;
+    feitosGeral += feitos; totalGeral += s.itens.length;
+    const pc = s.itens.length > 0 ? Math.round(feitos / s.itens.length * 100) : 0;
+    return '<details class="dobra"' + (feitos < s.itens.length ? ' open' : '') + '>' +
+      '<summary><span>' + esc(s.emoji) + '</span><span style="flex:1">' + esc(s.nome) +
+        '<span style="display:block;font-weight:600;font-size:11.5px;color:var(--lapis)">' + esc(s.resumo) + '</span></span>' +
+        '<span class="tag t-oliva">' + feitos + ' de ' + s.itens.length + '</span></summary>' +
+      '<div class="corpo">' +
+        '<div class="progresso"><i style="width:' + pc + '%"></i></div>' +
+        '<p class="porque">' + esc(s.porque) + '</p>' +
+        s.itens.map((it, i) => {
+          const chave = s.id + '_' + i, ok = marcadosSet.has(chave);
+          return '<label class="check' + (ok ? ' ok' : '') + '">' +
+            '<input type="checkbox" data-chave="' + esc(chave) + '"' + (ok ? ' checked' : '') + '>' +
+            '<span><b>' + esc(it.t) + '</b><span>' + esc(it.d) + '</span></span></label>';
+        }).join('') +
+      '</div></details>';
+  }).join('');
+  const pcGeral = totalGeral > 0 ? Math.round(feitosGeral / totalGeral * 100) : 0;
+  $('#subconteudo').innerHTML =
+    '<div class="caixa"><h2>No geral: ' + feitosGeral + ' de ' + totalGeral + ' itens (' + pcGeral + '%)</h2>' +
+      '<div class="progresso"><i style="width:' + pcGeral + '%"></i></div></div>' +
+    '<div style="margin-top:12px">' + html + '</div>';
+  $$('#subconteudo input[type=checkbox]').forEach(c => c.addEventListener('change', async e => {
+    await marcar(e.target.dataset.chave, e.target.checked);
+    subChecklist(B);
+  }));
+}
+
+function subRefs(B) {
+  const refs = B.REFERENCIAS || [];
+  $('#subconteudo').innerHTML = '<div class="cartoes">' + refs.map((r, i) =>
+    '<button class="cartao-ref" type="button" data-ref="' + i + '">' +
+      '<div class="capa-ref c-' + esc(r.cor) + '">' + esc(r.emoji) + '</div>' +
+      '<div class="info"><b>' + esc(r.titulo) + '</b>' +
+        '<span>' + esc(r.estilo) + ' · ' + esc(r.duracao) + '</span>' +
+        '<span>' + esc(r.marca) + '</span></div></button>').join('') + '</div>';
+  $$('[data-ref]').forEach(b => b.addEventListener('click', () => fichaRef(refs[Number(b.dataset.ref)])));
+}
+
+function fichaRef(r) {
+  const fundo = document.createElement('div');
+  fundo.className = 'fundo';
+  fundo.innerHTML = '<div class="janela larga" role="dialog" aria-modal="true" aria-label="' + esc(r.titulo) + '">' +
+    '<h2>' + esc(r.emoji) + ' ' + esc(r.titulo) + '</h2>' +
+    '<p><span class="tag t-oliva">' + esc(r.estilo) + '</span> <span class="tag t-cinza">' + esc(r.duracao) + '</span> <span class="tag t-azul">' + esc(r.audiencia) + '</span> <span class="tag t-mostarda">' + esc(r.marca) + '</span></p>' +
+    '<p class="porque"><b>Gancho:</b> ' + esc(r.gancho) + '</p>' +
+    '<p><b>Por que funciona:</b> ' + esc(r.porque) + '</p>' +
+    '<p><b>Diferencial:</b> ' + esc(r.diferencial) + '</p>' +
+    '<p><b>Erro comum:</b> ' + esc(r.erro) + '</p>' +
+    '<h3 style="font-size:13px;margin:12px 0 4px">Roteiro</h3>' +
+    (r.roteiro || []).map(b => '<div class="beat"><b>' + esc(b.t) + '</b><span>' + b.o + '</span></div>').join('') +
+    '<div class="rodape">' +
+      (r.youtube ? '<a class="btn" href="' + esc(r.youtube) + '" target="_blank" rel="noopener">Assistir</a>' : '') +
+      '<button class="btn claro" id="fecha" type="button">Fechar</button></div></div>';
+  document.body.appendChild(fundo);
+  const fechar = () => fundo.remove();
+  $('#fecha', fundo).addEventListener('click', fechar);
+  fundo.addEventListener('click', e => { if (e.target === fundo) fechar(); });
+}
+
+function subRoteiros(B) {
+  $('#subconteudo').innerHTML = (B.TIPOS || []).map(t =>
+    '<details class="dobra"><summary><span>' + esc(t.emoji) + '</span><span style="flex:1">' + esc(t.nome) + '</span>' +
+      '<span class="tag t-cinza">' + esc(t.duracao) + '</span></summary>' +
+      '<div class="corpo"><p class="porque"><b>Quando usar:</b> ' + esc(t.porque) + '</p>' +
+      (t.beats || []).map(b => '<div class="beat"><b>' + esc(b.t) + '</b><span>' + b.o + '</span></div>').join('') +
+      (t.erros && t.erros.length ? '<h3 style="font-size:12.5px;margin:12px 0 4px">Erros que derrubam</h3>' +
+        t.erros.map(e => '<div class="ideia"><b>' + esc(e) + '</b></div>').join('') : '') +
+      '</div></details>').join('');
+}
+
+function subIdeias(B) {
+  $('#subconteudo').innerHTML = (B.NICHOS || []).map(n =>
+    '<details class="dobra"><summary><span>' + esc(n.emoji) + '</span><span style="flex:1">' + esc(n.nome) + '</span>' +
+      '<span class="tag t-oliva">' + (n.ideias || []).length + ' ideias</span></summary>' +
+      '<div class="corpo">' + (n.ideias || []).map(i =>
+        '<div class="ideia"><b>' + esc(i.t) + '</b><span>' + esc(i.gancho) + '</span></div>').join('') +
+      '</div></details>').join('');
+}
+
+function subRevisar(B) {
+  const salvo = (function () { try { return localStorage.getItem('roteiroRascunho') || ''; } catch (e) { return ''; } })();
+  $('#subconteudo').innerHTML =
+    '<div class="caixa"><h2>Cole aqui o seu roteiro</h2>' +
+      '<textarea id="meuRoteiro" style="min-height:150px" placeholder="Cole o texto do roteiro e vá conferindo os blocos abaixo.">' + esc(salvo) + '</textarea>' +
+      '<p style="font-size:11.5px;color:var(--lapis);margin:6px 0 0">Este texto fica salvo só neste navegador, não vai para o banco.</p></div>' +
+    '<div style="margin-top:12px">' + (B.REVISAO || []).map((b, bi) =>
+      '<details class="dobra" open><summary><span>' + esc(b.emoji) + '</span><span style="flex:1">' + esc(b.bloco) + '</span></summary>' +
+        '<div class="corpo">' + (b.itens || []).map((it, i) => {
+          const chave = 'rev_' + bi + '_' + i, ok = marcadosSet.has(chave);
+          return '<label class="check' + (ok ? ' ok' : '') + '"><input type="checkbox" data-chave="' + chave + '"' + (ok ? ' checked' : '') + '>' +
+            '<span><b>' + esc(it.t) + '</b><span>' + esc(it.d) + '</span></span></label>';
+        }).join('') + '</div></details>').join('') + '</div>';
+
+  $('#meuRoteiro').addEventListener('input', e => {
+    try { localStorage.setItem('roteiroRascunho', e.target.value); } catch (x) {}
+  });
+  $$('#subconteudo input[type=checkbox]').forEach(c => c.addEventListener('change', async e => {
+    await marcar(e.target.dataset.chave, e.target.checked);
+    subRevisar(B);
+  }));
+}
+</script>
+</body>
+</html>
