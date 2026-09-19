@@ -357,12 +357,20 @@ let usuario = null;
     painel.innerHTML = '<p class="aviso erro">Não consegui carregar a conexão com o banco. Recarregue a página.</p>';
     return;
   }
+  /* Tenta algumas vezes antes de desistir. Em celular e internet lenta a
+     sessão às vezes demora uns milésimos para ser lida do navegador, e
+     desistir na primeira tentativa jogava você de volta para o login. */
   let sessao = null;
-  try {
-    const { data } = await window.db.auth.getSession();
-    sessao = data ? data.session : null;
-  } catch (e) {}
-  if (!sessao) { location.replace('../login/'); return; }
+  for (let i = 0; i < 6 && !sessao; i++) {
+    try {
+      const { data } = await window.db.auth.getSession();
+      sessao = data ? data.session : null;
+    } catch (e) {}
+    if (!sessao) await new Promise(r => setTimeout(r, 300));
+  }
+  /* Se mesmo assim não achou, volta para o login avisando o motivo,
+     em vez de deixar a tela parada sem explicação. */
+  if (!sessao) { location.replace(new URL('../login/?semsessao=1', location.href).href); return; }
 
   usuario = sessao.user;
   $('#emailLogado').textContent = usuario.email || '';
@@ -373,7 +381,7 @@ let usuario = null;
 
 $('#btnSair').addEventListener('click', async function () {
   try { await window.db.auth.signOut(); } catch (e) {}
-  location.replace('../login/');
+  location.replace(new URL('../login/', location.href).href);
 });
 
 /* ============================================================
