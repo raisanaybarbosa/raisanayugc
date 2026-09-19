@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Cache-Control" content="no-store">
 <title>Painel | Raisa Nayara Barbosa</title>
 <meta name="description" content="Área restrita.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -279,7 +280,7 @@ tr.arrastando{opacity:.4}
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.min.js"></script>
 <script src="../js/banco.js"></script>
 <script src="../js/biblioteca.js"></script>
 <script>
@@ -362,10 +363,7 @@ let usuario = null;
      desistir na primeira tentativa jogava você de volta para o login. */
   let sessao = null;
   for (let i = 0; i < 6 && !sessao; i++) {
-    try {
-      const { data } = await window.db.auth.getSession();
-      sessao = data ? data.session : null;
-    } catch (e) {}
+    sessao = await window.acharSessao();   // olha a sessão e, se faltar, usa a cópia
     if (!sessao) await new Promise(r => setTimeout(r, 300));
   }
   /* Se mesmo assim não achou, volta para o login avisando o motivo,
@@ -381,6 +379,7 @@ let usuario = null;
 
 $('#btnSair').addEventListener('click', async function () {
   try { await window.db.auth.signOut(); } catch (e) {}
+  window.apagarCopiaDaSessao();   // limpa também a cópia de segurança
   location.replace(new URL('../login/', location.href).href);
 });
 
