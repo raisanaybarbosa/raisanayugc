@@ -60,20 +60,33 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--tomate);outline-off
 </head>
 <body>
 <main class="cartao">
-  <h1>Painel da Raisa</h1>
-  <p class="sub">Área restrita. Entre para continuar.</p>
+  <h1 id="titulo">Painel da Raisa</h1>
+  <p class="sub" id="subtitulo">Área restrita. Entre para continuar.</p>
 
   <p class="aviso" id="aviso" role="alert"></p>
 
-  <form id="form">
-    <label for="email">E-mail</label>
-    <input id="email" type="email" autocomplete="username" required>
-    <label for="senha">Senha</label>
-    <input id="senha" type="password" autocomplete="current-password" required>
-    <button type="submit" id="btn">Entrar</button>
-  </form>
+  <div id="blocoLogin">
+    <form id="form">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" autocomplete="current-password" required>
+      <button type="submit" id="btn">Entrar</button>
+    </form>
+    <button type="button" class="link" id="esqueci">Esqueci minha senha</button>
+  </div>
 
-  <button type="button" class="link" id="esqueci">Esqueci minha senha</button>
+  <!-- Aparece quando você chega pelo link do e-mail de recuperação -->
+  <div id="blocoNovaSenha" hidden>
+    <form id="formNovaSenha">
+      <label for="nova1">Nova senha</label>
+      <input id="nova1" type="password" autocomplete="new-password" required>
+      <label for="nova2">Repita a nova senha</label>
+      <input id="nova2" type="password" autocomplete="new-password" required>
+      <button type="submit" id="btnNova">Salvar nova senha</button>
+    </form>
+  </div>
+
   <a class="voltar" href="../">Voltar para o portfólio</a>
 </main>
 
@@ -88,14 +101,64 @@ function mostrar(texto, bom) {
   aviso.className = 'aviso aparece' + (bom ? ' ok' : '');
 }
 
+/* O link do e-mail de recuperação chega com "type=recovery" no endereço.
+   Nesse caso a tela não manda para o painel: ela pede a senha nova. */
+const pedaco = location.hash + ' ' + location.search;
+const ehRecuperacao = pedaco.indexOf('type=recovery') > -1;
+
+function telaDeNovaSenha() {
+  document.getElementById('blocoLogin').hidden = true;
+  document.getElementById('blocoNovaSenha').hidden = false;
+  document.getElementById('titulo').textContent = 'Nova senha';
+  document.getElementById('subtitulo').textContent = 'Escolha uma senha nova para entrar no painel.';
+  document.getElementById('nova1').focus();
+}
+
+/* Se o link estiver vencido, o Supabase devolve o erro no próprio endereço */
+if (pedaco.indexOf('error') > -1) {
+  mostrar('Esse link de recuperação venceu ou já foi usado. Peça um novo em "Esqueci minha senha".');
+}
+
 /* Se já tiver sessão aberta, vai direto para o painel */
 (async function () {
   if (!window.db) { mostrar('Não consegui falar com o banco agora. Recarregue a página.'); return; }
+  if (ehRecuperacao) { telaDeNovaSenha(); return; }
   try {
     const { data } = await window.db.auth.getSession();
     if (data && data.session) location.replace('../admin/');
   } catch (e) {}
 })();
+
+/* O Supabase avisa quando a pessoa chegou por um link de recuperação */
+if (window.db) {
+  window.db.auth.onAuthStateChange(function (evento) {
+    if (evento === 'PASSWORD_RECOVERY') telaDeNovaSenha();
+  });
+}
+
+/* Salvar a senha nova */
+document.getElementById('formNovaSenha').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const a = document.getElementById('nova1').value;
+  const b = document.getElementById('nova2').value;
+  if (a.length < 6) { mostrar('A senha precisa ter pelo menos 6 letras ou números.'); return; }
+  if (a !== b) { mostrar('As duas senhas estão diferentes. Digite de novo.'); return; }
+
+  const bn = document.getElementById('btnNova');
+  bn.disabled = true; bn.textContent = 'Salvando...';
+  const { error } = await window.db.auth.updateUser({ password: a });
+  bn.disabled = false; bn.textContent = 'Salvar nova senha';
+
+  if (error) {
+    const m = (error.message || '').toLowerCase();
+    if (m.indexOf('should be different') > -1) mostrar('Essa é a mesma senha de antes. Escolha uma diferente.');
+    else if (m.indexOf('session') > -1 || m.indexOf('jwt') > -1) mostrar('Esse link de recuperação venceu. Peça um novo em "Esqueci minha senha".');
+    else mostrar('Não consegui salvar a senha nova. Tente pedir um novo link.');
+    return;
+  }
+  mostrar('Senha trocada. Entrando no painel...', true);
+  setTimeout(function () { location.replace('../admin/'); }, 1200);
+});
 
 /* Entrar */
 document.getElementById('form').addEventListener('submit', async function (e) {
@@ -125,7 +188,7 @@ document.getElementById('esqueci').addEventListener('click', async function () {
   const email = document.getElementById('email').value.trim();
   if (!email) { mostrar('Escreva o seu e-mail no campo acima e clique de novo.'); return; }
   if (!window.db) { mostrar('Não consegui falar com o banco agora.'); return; }
-  const volta = location.href.replace(/\/login\/?(index\.html)?$/, '/login/');
+  const volta = location.origin + location.pathname;   // volta para esta mesma tela
   const { error } = await window.db.auth.resetPasswordForEmail(email, { redirectTo: volta });
   if (error) mostrar('Não consegui enviar o e-mail de recuperação agora. Tente de novo em um minuto.');
   else mostrar('Enviei um e-mail de recuperação para ' + email + '. Olhe a caixa de entrada e o spam.', true);
