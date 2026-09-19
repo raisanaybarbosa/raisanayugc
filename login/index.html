@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Entrar | Painel da Raisa</title>
+<meta name="description" content="Área restrita.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --creme:#f7f3e8;--papel:#fff;--oliva:#5f6f45;--oliva-claro:#eaeee0;
+  --tomate:#c74b34;--tomate-claro:#f7e6e1;--tinta:#2f2c22;--lapis:#6d6a5c;
+  --borda:rgba(47,44,34,.14);--raio:2px;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  font-family:'Mulish',system-ui,sans-serif;font-size:14px;line-height:1.6;color:var(--tinta);
+  background-color:var(--creme);
+  background-image:repeating-linear-gradient(to bottom,transparent 0 31px,rgba(95,111,69,.14) 31px 32px);
+}
+.cartao{
+  width:min(380px,100%);background:var(--papel);border:1px solid var(--borda);
+  border-left:6px solid var(--oliva);border-radius:var(--raio);padding:26px 24px;
+  box-shadow:0 14px 34px -26px rgba(47,44,34,.9);
+}
+h1{font-size:18px;font-weight:800;margin:0 0 2px}
+.sub{color:var(--lapis);font-size:12.5px;margin:0 0 20px}
+label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--oliva);margin-bottom:5px}
+input{
+  width:100%;font:inherit;color:var(--tinta);background:var(--creme);
+  border:1px solid var(--borda);border-bottom:2px solid var(--oliva);
+  border-radius:var(--raio);padding:9px 10px;margin-bottom:14px;
+}
+input:focus-visible{outline:3px solid var(--tomate);outline-offset:2px}
+button{
+  width:100%;font:inherit;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.1em;
+  cursor:pointer;padding:11px;border:2px solid var(--oliva);background:var(--oliva);color:#fff;border-radius:var(--raio);
+}
+button:hover{background:#4c5a37;border-color:#4c5a37}
+button:disabled{opacity:.6;cursor:progress}
+button:focus-visible,a:focus-visible{outline:3px solid var(--tomate);outline-offset:2px}
+.aviso{
+  display:none;border-radius:var(--raio);padding:9px 11px;margin-bottom:14px;font-size:12.5px;
+  background:var(--tomate-claro);border-left:3px solid var(--tomate);color:#8c3122;
+}
+.aviso.ok{background:var(--oliva-claro);border-left-color:var(--oliva);color:#42502f}
+.aviso.aparece{display:block}
+.link{
+  display:inline-block;margin-top:14px;background:none;border:0;padding:0;width:auto;
+  font-size:12px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--lapis);
+  text-decoration:underline;cursor:pointer;
+}
+.link:hover{color:var(--tomate);background:none}
+.voltar{display:block;margin-top:18px;font-size:11.5px;color:var(--lapis);text-align:center}
+</style>
+</head>
+<body>
+<main class="cartao">
+  <h1>Painel da Raisa</h1>
+  <p class="sub">Área restrita. Entre para continuar.</p>
+
+  <p class="aviso" id="aviso" role="alert"></p>
+
+  <form id="form">
+    <label for="email">E-mail</label>
+    <input id="email" type="email" autocomplete="username" required>
+    <label for="senha">Senha</label>
+    <input id="senha" type="password" autocomplete="current-password" required>
+    <button type="submit" id="btn">Entrar</button>
+  </form>
+
+  <button type="button" class="link" id="esqueci">Esqueci minha senha</button>
+  <a class="voltar" href="../">Voltar para o portfólio</a>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="../js/banco.js"></script>
+<script>
+const aviso = document.getElementById('aviso');
+const btn = document.getElementById('btn');
+
+function mostrar(texto, bom) {
+  aviso.textContent = texto;
+  aviso.className = 'aviso aparece' + (bom ? ' ok' : '');
+}
+
+/* Se já tiver sessão aberta, vai direto para o painel */
+(async function () {
+  if (!window.db) { mostrar('Não consegui falar com o banco agora. Recarregue a página.'); return; }
+  try {
+    const { data } = await window.db.auth.getSession();
+    if (data && data.session) location.replace('../admin/');
+  } catch (e) {}
+})();
+
+/* Entrar */
+document.getElementById('form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  if (!window.db) { mostrar('Não consegui falar com o banco agora.'); return; }
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('senha').value;
+  if (!email || !senha) { mostrar('Preencha o e-mail e a senha.'); return; }
+
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  const { error } = await window.db.auth.signInWithPassword({ email: email, password: senha });
+  btn.disabled = false; btn.textContent = 'Entrar';
+
+  if (error) {
+    /* Toda mensagem do Supabase vem em inglês. Aqui vira português. */
+    const m = (error.message || '').toLowerCase();
+    if (m.includes('email not confirmed')) mostrar('Esse e-mail ainda não foi confirmado. Procure o e-mail de confirmação do Supabase.');
+    else if (m.includes('too many') || m.includes('rate limit')) mostrar('Muitas tentativas seguidas. Espere um minuto e tente de novo.');
+    else mostrar('E-mail ou senha incorretos');
+    return;
+  }
+  location.replace('../admin/');
+});
+
+/* Esqueci minha senha */
+document.getElementById('esqueci').addEventListener('click', async function () {
+  const email = document.getElementById('email').value.trim();
+  if (!email) { mostrar('Escreva o seu e-mail no campo acima e clique de novo.'); return; }
+  if (!window.db) { mostrar('Não consegui falar com o banco agora.'); return; }
+  const volta = location.href.replace(/\/login\/?(index\.html)?$/, '/login/');
+  const { error } = await window.db.auth.resetPasswordForEmail(email, { redirectTo: volta });
+  if (error) mostrar('Não consegui enviar o e-mail de recuperação agora. Tente de novo em um minuto.');
+  else mostrar('Enviei um e-mail de recuperação para ' + email + '. Olhe a caixa de entrada e o spam.', true);
+});
+</script>
+</body>
+</html>
