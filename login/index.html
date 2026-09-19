@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Cache-Control" content="no-store">
 <title>Entrar | Painel da Raisa</title>
 <meta name="description" content="Área restrita.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,7 +91,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--tomate);outline-off
   <a class="voltar" href="../">Voltar para o portfólio</a>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.min.js"></script>
 <script src="../js/banco.js"></script>
 <script>
 const aviso = document.getElementById('aviso');
@@ -146,10 +147,8 @@ if (pedaco.indexOf('error') > -1) {
   if (!window.db) { mostrar('Não consegui falar com o banco agora. Recarregue a página.'); return; }
   if (ehRecuperacao) { telaDeNovaSenha(); return; }
   if (location.search.indexOf('semsessao=1') > -1) return;   // não fica indo e voltando
-  try {
-    const { data } = await window.db.auth.getSession();
-    if (data && data.session) location.replace(ENDERECO_ADMIN);
-  } catch (e) {}
+  const s = await window.acharSessao();
+  if (s) location.replace(ENDERECO_ADMIN);
 })();
 
 /* O Supabase avisa quando a pessoa chegou por um link de recuperação */
@@ -196,18 +195,19 @@ document.getElementById('form').addEventListener('submit', async function (e) {
   btn.disabled = false; btn.textContent = 'Entrar';
 
   if (!error) {
-    /* Confere se a sessão ficou mesmo guardada antes de sair desta tela.
-       Se não ficou, o painel iria devolver você para cá sem explicar nada. */
+    /* Guardamos a cópia de segurança da sessão na mão. É isto que
+       garante que o painel consegue abrir mesmo se a biblioteca
+       perder a sessão ao trocar de página. */
+    if (data && data.session) window.guardarCopiaDaSessao(data.session);
+
+    /* Confere se dá para achar a sessão antes de sair desta tela */
     let guardou = false;
     for (let i = 0; i < 6 && !guardou; i++) {
-      try {
-        const s = await window.db.auth.getSession();
-        guardou = !!(s && s.data && s.data.session);
-      } catch (e) {}
+      guardou = !!(await window.acharSessao());
       if (!guardou) await new Promise(r => setTimeout(r, 300));
     }
     if (!guardou) {
-      mostrar('A sua senha está certa, mas este navegador não está guardando a sessão. Se estiver em janela anônima, abra em uma janela normal. Se não, libere os dados do site nas configurações do navegador.');
+      mostrar('A sua senha está certa, mas este navegador não está guardando a sessão. Clique no link abaixo para abrir o painel.');
       linkDeSocorro();
       return;
     }
