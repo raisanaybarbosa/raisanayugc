@@ -525,6 +525,9 @@ input:focus-visible,textarea:focus-visible{outline:3px solid var(--tomate);outli
   </div>
 </div>
 
+<!-- Conexão com o banco. Sem isto o site funciona igual, só não lê do painel. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="js/banco.js"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -555,18 +558,18 @@ const MARCAS = ['Madame Lup', 'Marca 02', 'Marca 03', 'Marca 04', 'Marca 05', 'M
 /* Três conteúdos de destaque.
    numero: o número forte (ex.: '+2,4M') | rotulo: o que ele mede (ex.: 'views no reels')
    link: endereço do vídeo | capa: imagem vertical 9:16 (caminho do arquivo), vazio = espaço reservado */
-const DESTAQUES = [
+let DESTAQUES = [
   { numero: '+0,0M', rotulo: 'views no reels',  titulo: 'Título do conteúdo 01', contexto: 'Marca 01, campanha de lançamento.', link: '#LINK_DO_VIDEO_1', capa: '' },
   { numero: '+0,0M', rotulo: 'views no tiktok', titulo: 'Título do conteúdo 02', contexto: 'Marca 02, vídeo de review.',        link: '#LINK_DO_VIDEO_2', capa: '' },
   { numero: '+0,0M', rotulo: 'views no reels',  titulo: 'Título do conteúdo 03', contexto: 'Marca 03, unboxing.',               link: '#LINK_DO_VIDEO_3', capa: '' }
 ];
 
 /* Nichos que atendo (os botões de filtro nascem desta lista) */
-const NICHOS = ['beleza', 'fitness', 'maternidade', 'tech'];
+let NICHOS = ['beleza', 'fitness', 'maternidade', 'tech'];
 
 /* Trabalhos. nicho precisa ser um dos NICHOS acima.
    imagem: caminho da imagem 4:5 (vazio = espaço reservado) | link: onde o trabalho abre */
-const TRABALHOS = [
+let TRABALHOS = [
   { titulo: 'Trabalho 01', marca: 'Marca 01', nicho: 'beleza',      formato: 'Vídeo UGC',          imagem: '', link: '#' },
   { titulo: 'Trabalho 02', marca: 'Marca 02', nicho: 'beleza',      formato: 'Fotos do produto',   imagem: '', link: '#' },
   { titulo: 'Trabalho 03', marca: 'Marca 03', nicho: 'fitness',     formato: 'Vídeo UGC',          imagem: '', link: '#' },
@@ -640,6 +643,7 @@ $('#faixaMarcas').innerHTML = [0, 1].map(i =>
   `<ul ${i ? 'aria-hidden="true"' : ''}>${MARCAS.map(n => `<li>${esc(n)}</li>`).join('')}</ul>`).join('');
 
 /* destaques: o card inteiro é um link */
+function desenharDestaques() {
 $('#listaDestaques').innerHTML = DESTAQUES.map((d, i) => {
   const capa = d.capa
     ? `<img src="${esc(d.capa)}" alt="Capa do vídeo: ${esc(d.titulo)}" loading="lazy" width="540" height="960">`
@@ -652,6 +656,8 @@ $('#listaDestaques').innerHTML = DESTAQUES.map((d, i) => {
     <p>${esc(d.contexto)}</p>
   </a>`;
 }).join('');
+}
+desenharDestaques();
 
 /* galeria com filtro por nicho */
 let nichoAtivo = 'todos';
@@ -754,7 +760,20 @@ form.addEventListener('submit', e => {
   const ok = form.nome.value.trim() && /^\S+@\S+\.\S+$/.test(form.email.value.trim()) && form.mensagem.value.trim();
   erro.hidden = !!ok;
   if (!ok) return;
-  /* AQUI entra o envio real (fetch para Formspree, Getform etc.). Por enquanto só confirma na tela. */
+  /* A mensagem vira uma marca nova na base da Raisa, com situação "lead".
+     Se o banco estiver fora do ar, a confirmação aparece do mesmo jeito,
+     para a pessoa nunca ver erro na tela. */
+  if (window.db) {
+    window.db.from('marcas').insert({
+      nome: form.nome.value.trim(),
+      email: form.email.value.trim(),
+      situacao: 'lead',
+      obs: 'Veio pelo formulário do site: ' + form.mensagem.value.trim(),
+      ultimo_contato: new Date().toLocaleDateString('sv-SE')
+    }).then(function (r) {
+      if (r && r.error) console.warn('Não consegui registrar o lead:', r.error.message);
+    });
+  }
   form.hidden = true;
   confirma.hidden = false;
   confirma.focus();
@@ -801,6 +820,94 @@ $('#formCaptura').addEventListener('submit', e => {
   $('#capturaOk').hidden = false;
   $('#okCaptura').focus();
 });
+
+/* =====================================================
+   LIGAÇÃO COM O PAINEL
+   O site lê os vídeos da tabela "videos". Assim, quando a
+   Raisa edita no painel, o site muda sozinho, sem publicar
+   de novo. Se o banco estiver vazio ou fora do ar, fica
+   valendo o conteúdo que já está escrito aqui em cima.
+   ===================================================== */
+
+/* Registro de visita, simples e sem serviço de fora.
+   Não guarda nada da pessoa, só a data, a página e de onde veio. */
+(function registrarVisita() {
+  if (!window.db) return;
+  var origem = 'direto';
+  try {
+    var r = document.referrer || '';
+    if (r) {
+      var h = new URL(r).hostname.replace('www.', '');
+      if (h && h !== location.hostname) {
+        if (h.indexOf('instagram') > -1) origem = 'instagram';
+        else if (h.indexOf('google') > -1) origem = 'google';
+        else if (h.indexOf('tiktok') > -1) origem = 'tiktok';
+        else if (h.indexOf('youtube') > -1 || h.indexOf('youtu.be') > -1) origem = 'youtube';
+        else if (h.indexOf('facebook') > -1) origem = 'facebook';
+        else if (h.indexOf('wa.me') > -1 || h.indexOf('whatsapp') > -1) origem = 'whatsapp';
+        else origem = h;
+      }
+    }
+    /* uma visita por aba aberta, para não contar recarregar como visita nova */
+    if (sessionStorage.getItem('visitaContada')) return;
+    sessionStorage.setItem('visitaContada', '1');
+  } catch (e) {}
+  window.db.from('visitas').insert({ pagina: location.pathname || '/', origem: origem })
+    .then(function (r) { if (r && r.error) console.warn('Visita não registrada:', r.error.message); });
+})();
+
+/* Leitura dos vídeos cadastrados no painel */
+(function carregarDoPainel() {
+  if (!window.db) return;
+  window.db.from('videos').select('*').eq('visivel', true).order('ordem', { ascending: true })
+    .then(function (r) {
+      if (!r || r.error || !r.data || r.data.length === 0) return;   // sem dados, fica como está
+      var v = r.data;
+
+      /* A galeria de trabalhos passa a ser o que está no painel */
+      TRABALHOS = v.map(function (x) {
+        return {
+          titulo: x.titulo || 'Sem título',
+          marca: x.marca || '',
+          nicho: (x.nicho || 'beleza').toLowerCase(),
+          formato: x.formato || '',
+          imagem: '',
+          link: x.link || '#'
+        };
+      });
+
+      /* Os nichos dos botões de filtro saem dos próprios vídeos */
+      var achados = [];
+      TRABALHOS.forEach(function (t) { if (t.nicho && achados.indexOf(t.nicho) < 0) achados.push(t.nicho); });
+      if (achados.length) NICHOS = achados;
+      nichoAtivo = 'todos';
+      desenharFiltros();
+      desenharGaleria();
+
+      /* Os três destaques são os vídeos que têm o campo destaque preenchido.
+         O texto do destaque vira o número forte e o rótulo.
+         Exemplo: "2,4M views" vira +2,4M em cima e "views" embaixo. */
+      var comNumero = v.filter(function (x) { return x.destaque && String(x.destaque).trim(); }).slice(0, 3);
+      if (comNumero.length) {
+        DESTAQUES = comNumero.map(function (x) {
+          var txt = String(x.destaque).trim();
+          var corte = txt.indexOf(' ');
+          return {
+            numero: corte > 0 ? txt.slice(0, corte) : txt,
+            rotulo: corte > 0 ? txt.slice(corte + 1) : 'de alcance',
+            titulo: x.titulo || 'Sem título',
+            contexto: [x.marca, x.formato].filter(Boolean).join(', '),
+            link: x.link || '#',
+            capa: ''
+          };
+        });
+        desenharDestaques();
+        if ('IntersectionObserver' in window && !reduz) {
+          document.querySelectorAll('#listaDestaques .reveal').forEach(function (el) { el.classList.add('in'); });
+        }
+      }
+    });
+})();
 </script>
 </body>
 </html>
