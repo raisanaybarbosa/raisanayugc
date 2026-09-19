@@ -96,9 +96,31 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--tomate);outline-off
 const aviso = document.getElementById('aviso');
 const btn = document.getElementById('btn');
 
+/* Endereço do painel montado de forma absoluta.
+   Assim ele funciona com barra no fim, sem barra, ou com barra dobrada. */
+const ENDERECO_ADMIN = new URL('../admin/', location.href).href;
+
 function mostrar(texto, bom) {
   aviso.textContent = texto;
   aviso.className = 'aviso aparece' + (bom ? ' ok' : '');
+}
+
+/* Se o painel devolveu você para cá por não achar a sessão, ele avisa pela URL */
+if (location.search.indexOf('semsessao=1') > -1) {
+  mostrar('Você entrou, mas o painel não achou a sessão guardada. Tente entrar de novo. Se repetir, pode ser janela anônima ou o navegador bloqueando dados deste site.');
+}
+
+/* Rede de segurança: se por algum motivo a ida automática não acontecer,
+   aparece um link para você entrar no painel com um clique. */
+function linkDeSocorro() {
+  if (document.getElementById('socorro')) return;
+  const a = document.createElement('a');
+  a.id = 'socorro';
+  a.href = ENDERECO_ADMIN;
+  a.className = 'voltar';
+  a.style.fontWeight = '800';
+  a.textContent = 'Abrir o painel agora';
+  document.querySelector('.cartao').appendChild(a);
 }
 
 /* O link do e-mail de recuperação chega com "type=recovery" no endereço.
@@ -123,9 +145,10 @@ if (pedaco.indexOf('error') > -1) {
 (async function () {
   if (!window.db) { mostrar('Não consegui falar com o banco agora. Recarregue a página.'); return; }
   if (ehRecuperacao) { telaDeNovaSenha(); return; }
+  if (location.search.indexOf('semsessao=1') > -1) return;   // não fica indo e voltando
   try {
     const { data } = await window.db.auth.getSession();
-    if (data && data.session) location.replace('../admin/');
+    if (data && data.session) location.replace(ENDERECO_ADMIN);
   } catch (e) {}
 })();
 
@@ -157,7 +180,7 @@ document.getElementById('formNovaSenha').addEventListener('submit', async functi
     return;
   }
   mostrar('Senha trocada. Entrando no painel...', true);
-  setTimeout(function () { location.replace('../admin/'); }, 1200);
+  setTimeout(function () { location.replace(ENDERECO_ADMIN); }, 1200);
 });
 
 /* Entrar */
@@ -169,8 +192,30 @@ document.getElementById('form').addEventListener('submit', async function (e) {
   if (!email || !senha) { mostrar('Preencha o e-mail e a senha.'); return; }
 
   btn.disabled = true; btn.textContent = 'Entrando...';
-  const { error } = await window.db.auth.signInWithPassword({ email: email, password: senha });
+  const { data, error } = await window.db.auth.signInWithPassword({ email: email, password: senha });
   btn.disabled = false; btn.textContent = 'Entrar';
+
+  if (!error) {
+    /* Confere se a sessão ficou mesmo guardada antes de sair desta tela.
+       Se não ficou, o painel iria devolver você para cá sem explicar nada. */
+    let guardou = false;
+    for (let i = 0; i < 6 && !guardou; i++) {
+      try {
+        const s = await window.db.auth.getSession();
+        guardou = !!(s && s.data && s.data.session);
+      } catch (e) {}
+      if (!guardou) await new Promise(r => setTimeout(r, 300));
+    }
+    if (!guardou) {
+      mostrar('A sua senha está certa, mas este navegador não está guardando a sessão. Se estiver em janela anônima, abra em uma janela normal. Se não, libere os dados do site nas configurações do navegador.');
+      linkDeSocorro();
+      return;
+    }
+    mostrar('Tudo certo. Abrindo o painel...', true);
+    setTimeout(linkDeSocorro, 2500);   // se a ida automática falhar, aparece o link
+    location.replace(ENDERECO_ADMIN);
+    return;
+  }
 
   if (error) {
     /* Toda mensagem do Supabase vem em inglês. Aqui vira português. */
@@ -178,9 +223,7 @@ document.getElementById('form').addEventListener('submit', async function (e) {
     if (m.includes('email not confirmed')) mostrar('Esse e-mail ainda não foi confirmado. Procure o e-mail de confirmação do Supabase.');
     else if (m.includes('too many') || m.includes('rate limit')) mostrar('Muitas tentativas seguidas. Espere um minuto e tente de novo.');
     else mostrar('E-mail ou senha incorretos');
-    return;
   }
-  location.replace('../admin/');
 });
 
 /* Esqueci minha senha */
